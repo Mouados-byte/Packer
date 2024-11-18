@@ -1,0 +1,12 @@
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    hostname: ubuntu-vm
+    username: packer
+    password: "password-hash"
+  ssh:
+    install-server: yes
+    allow-pw: true
+  packages:
+    - qemu-guest-agent

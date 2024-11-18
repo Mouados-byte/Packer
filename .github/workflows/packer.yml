@@ -1,0 +1,32 @@
+name: Packer Build
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - staging
+      - prod
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: [dev, staging, prod]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@v2
+
+      - name: Initialize Packer
+        run: packer init packer/${{ matrix.environment }}.pkr.hcl
+
+      - name: Validate Packer template
+        run: packer validate packer/${{ matrix.environment }}.pkr.hcl
+
+      - name: Build Images with Packer
+        run: packer build packer/${{ matrix.environment }}.pkr.hcl
