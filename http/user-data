@@ -2,11 +2,17 @@
 autoinstall:
   version: 1
   identity:
-    hostname: ubuntu-vm
+    hostname: ubuntu-dev
+    password: "$6$rounds=4096$8dkK1P/oE$2DGKKt0wOFaNp.DtUXcQYHHO/bqe1J73OEoN5dNCE.poxq5oPabelVQGYdMQJSjNGVuKGHGWwKUYGJcHJ6CH1/"  # 'packer'
     username: packer
-    password: "password-hash"
   ssh:
-    install-server: yes
+    install-server: true
     allow-pw: true
   packages:
-    - qemu-guest-agent
+    - openssh-server
+  late-commands:
+    - echo 'packer ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/packer
+    - chmod 440 /target/etc/sudoers.d/packer
+    - systemctl enable ssh
+    - sed -i 's/^#*\(PermitRootLogin\).*/\1 yes/' /target/etc/ssh/sshd_config
+    - sed -i 's/^#*\(PasswordAuthentication\).*/\1 yes/' /target/etc/ssh/sshd_config
