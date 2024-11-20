@@ -16,18 +16,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         
+      - name: Generate SSH key
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keygen -t rsa -b 4096 -f ~/.ssh/packer -N ""
+          echo "PACKER_PUBLIC_KEY=$(cat ~/.ssh/packer.pub)" >> $GITHUB_ENV
+        
       - name: Install Dependencies
         run: |
           sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf
           sudo NEEDRESTART_MODE=a apt-get update
           sudo NEEDRESTART_MODE=a apt-get install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
           sudo usermod -aG libvirt,kvm $RUNNER_USER
-          # Setup KVM permissions
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger
           sudo chmod 666 /dev/kvm
-          ls -l /dev/kvm
 
       - name: Setup Packer
         uses: hashicorp/setup-packer@main
@@ -38,16 +39,11 @@ jobs:
         run: packer init packer/${{ matrix.environment }}.pkr.hcl
         
       - name: Validate Packer template
-        run: |
-          export PACKER_LOG=1
-          packer validate packer/${{ matrix.environment }}.pkr.hcl
+        run: packer validate packer/${{ matrix.environment }}.pkr.hcl
         
       - name: Build Images with Packer
+        env:
+          PACKER_SSH_PRIVATE_KEY_FILE: ~/.ssh/packer
         run: |
           export PACKER_LOG=1
-          # Try with KVM first, fall back to TCG if needed
-          if ! packer build -only="*.qemu.kvm" packer/${{ matrix.environment }}.pkr.hcl; then
-            echo "KVM build failed, falling back to TCG (slower)"
-            sed -i 's/accel=kvm/accel=tcg/' packer/${{ matrix.environment }}.pkr.hcl
-            packer build -only="*.qemu.kvm" packer/${{ matrix.environment }}.pkr.hcl
-          fi
+          packer build -only="*.qemu.kvm" packer/${{ matrix.environment }}.pkr.hcl

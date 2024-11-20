@@ -4,12 +4,17 @@ autoinstall:
   identity:
     hostname: ubuntu-dev
     username: packer
-    password: packer  # Make this match exactly with ssh_password in pkr.hcl
+    password: packer
   ssh:
     install-server: true
     allow-pw: true
   packages:
     - openssh-server
   late-commands:
-    - sed -i 's/^#*\(PasswordAuthentication\).*/\1 yes/' /target/etc/ssh/sshd_config
+    - mkdir -p /target/home/packer/.ssh
+    - echo '${PACKER_PUBLIC_KEY}' > /target/home/packer/.ssh/authorized_keys
+    - chmod 700 /target/home/packer/.ssh
+    - chmod 600 /target/home/packer/.ssh/authorized_keys
+    - chown -R packer:packer /target/home/packer/.ssh
+    - sed -i 's/^#*\(PubkeyAuthentication\).*/\1 yes/' /target/etc/ssh/sshd_config
     - systemctl enable ssh

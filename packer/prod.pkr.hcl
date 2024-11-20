@@ -50,8 +50,9 @@ source "qemu" "kvm" {
   http_port_min      = var.http_port_min
   http_port_max      = var.http_port_max
   shutdown_command   = "echo 'packer' | sudo -S shutdown -P now"
-  ssh_username       = "packer"
-  ssh_password       = "packer"
+  ssh_username           = "packer"
+  ssh_private_key_file   = "~/.ssh/packer"
+  ssh_keypair_name      = "packer"
   ssh_timeout        = "30m"
 
   boot_command = [
@@ -78,8 +79,9 @@ source "vmware-iso" "vmware" {
   http_port_min      = var.http_port_min
   http_port_max      = var.http_port_max
   shutdown_command   = "echo 'packer' | sudo -S shutdown -P now"
-  ssh_username       = "packer"
-  ssh_password       = "packer"
+  ssh_username           = "packer"
+  ssh_private_key_file   = "~/.ssh/packer"
+  ssh_keypair_name      = "packer"
   ssh_wait_timeout   = "30m"
 
   boot_command = [

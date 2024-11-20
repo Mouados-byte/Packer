@@ -22,8 +22,9 @@ source "qemu" "kvm" {
   memory           = 2048
   cpus             = 2
   headless         = true
-  ssh_username     = "packer"
-  ssh_password     = "packer"
+  ssh_username           = "packer"
+  ssh_private_key_file   = "~/.ssh/packer"
+  ssh_keypair_name      = "packer"
   ssh_timeout      = "30m"
   shutdown_command = "echo 'ubuntu' | sudo -S shutdown -P now"
   vm_name          = local.vm_name
@@ -45,8 +46,9 @@ source "vmware-iso" "vmware" {
   disk_size         = 40000
   memory            = 4096
   cpus              = 2
-  ssh_username      = "packer"
-  ssh_password      = "packer"
+  ssh_username           = "packer"
+  ssh_private_key_file   = "~/.ssh/packer"
+  ssh_keypair_name      = "packer"
   ssh_timeout       = "30m"
   shutdown_command  = "echo 'ubuntu' | sudo -S shutdown -P now"
   vm_name           = local.vm_name
