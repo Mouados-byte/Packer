@@ -45,8 +45,8 @@ source "vmware-iso" "vmware" {
   disk_size         = 40000
   memory            = 4096
   cpus              = 2
-  ssh_username      = "ubuntu"
-  ssh_password      = "ubuntu"
+  ssh_username      = "packer"
+  ssh_password      = "packer"
   ssh_timeout       = "30m"
   shutdown_command  = "echo 'ubuntu' | sudo -S shutdown -P now"
   vm_name           = local.vm_name
