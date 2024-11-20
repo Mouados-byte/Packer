@@ -32,7 +32,11 @@ jobs:
         run: packer init packer/${{ matrix.environment }}.pkr.hcl
         
       - name: Validate Packer template
-        run: packer validate packer/${{ matrix.environment }}.pkr.hcl
+        run: |
+          export PACKER_LOG=1
+          packer validate packer/${{ matrix.environment }}.pkr.hcl
         
       - name: Build Images with Packer
-        run: packer build -only="*.qemu.kvm" packer/${{ matrix.environment }}.pkr.hcl
+        run: |
+          export PACKER_LOG=1
+          packer build -only="*.qemu.kvm" packer/${{ matrix.environment }}.pkr.hcl
