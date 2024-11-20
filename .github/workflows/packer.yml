@@ -1,5 +1,4 @@
 name: Packer Build
-
 on:
   push:
     branches:
@@ -7,48 +6,36 @@ on:
       - dev
       - staging
       - prod
-
 jobs:
   build:
-    # Use a self-hosted runner with virtualization capabilities
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         environment: [dev, staging, prod]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
+        
       - name: Install Dependencies
         run: |
-          # Install required packages
           sudo apt-get update
           sudo apt-get install -y wget unzip qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
-
-          # Add current user to libvirt and kvm groups
-          sudo usermod -aG libvirt,kvm $USER
-          newgrp libvirt
-          newgrp kvm
-
+          sudo usermod -aG libvirt,kvm $RUNNER_USER
+          # We don't need newgrp commands in GitHub Actions as they run in separate shells
+          
       - name: Install Packer Manually
         run: |
-          # Download the latest Packer version
           PACKER_VERSION="1.9.2"
           wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
-
-          # Unzip and move to /usr/local/bin
           unzip packer_${PACKER_VERSION}_linux_amd64.zip
           sudo mv packer /usr/local/bin/
-
-          # Verify Packer installation
           packer version
-
+          
       - name: Initialize Packer
         run: packer init packer/${{ matrix.environment }}.pkr.hcl
-
+        
       - name: Validate Packer template
         run: packer validate packer/${{ matrix.environment }}.pkr.hcl
-
+        
       - name: Build Images with Packer
         run: packer build -only=source.qemu.kvm packer/${{ matrix.environment }}.pkr.hcl
