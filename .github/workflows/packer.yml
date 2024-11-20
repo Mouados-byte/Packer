@@ -35,4 +35,4 @@ jobs:
         run: packer validate packer/${{ matrix.environment }}.pkr.hcl
         
       - name: Build Images with Packer
-        run: packer build -only=source.qemu.kvm packer/${{ matrix.environment }}.pkr.hcl
+        run: packer build -only="*.qemu.kvm" packer/${{ matrix.environment }}.pkr.hcl
