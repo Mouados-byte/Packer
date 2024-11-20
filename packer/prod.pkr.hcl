@@ -15,7 +15,7 @@ packer {
 
 variable "iso_url" {
   type    = string
-  default = "https://releases.ubuntu.com/20.04/ubuntu-20.04.5-live-server-amd64.iso"
+  default = "https://releases.ubuntu.com/22.04/ubuntu-22.04.5-live-server-amd64.iso"
 }
 
 variable "iso_checksum" {
