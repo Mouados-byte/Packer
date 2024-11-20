@@ -17,7 +17,7 @@ locals {
 
 source "qemu" "kvm" {
   iso_url           = "https://releases.ubuntu.com/22.04/ubuntu-22.04.5-live-server-amd64.iso"
-  iso_checksum      = "sha256:a4acfda10b18da50e2ec50ccaf860d7f20b389df8765611142305c0e911d16fd"
+  iso_checksum      = "a4acfda10b18da50e2ec50ccaf860d7f20b389df8765611142305c0e911d16fd"
   disk_size        = "4000M"
   memory           = 2048
   cpus             = 2
