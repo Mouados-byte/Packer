@@ -20,7 +20,7 @@ variable "iso_url" {
 
 variable "iso_checksum" {
   type    = string
-  default = "b8f31413336b9393ad5d8ef0282717b2ab19f007df2e9ed5196c13d8f9153c8b"
+  default = "9bc6028870aef3f74f4e16b900008179e78b130e6b0b9a140635434a46aa98b0"
 }
 
 variable "http_port_min" {
