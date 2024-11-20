@@ -18,17 +18,20 @@ jobs:
         
       - name: Install Dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
+          # Disable needrestart
+          sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf
+          
+          # Install required packages
+          sudo NEEDRESTART_MODE=a apt-get update
+          sudo NEEDRESTART_MODE=a apt-get install -y wget unzip qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
           sudo usermod -aG libvirt,kvm $RUNNER_USER
-          # We don't need newgrp commands in GitHub Actions as they run in separate shells
           
       - name: Install Packer Manually
         run: |
           PACKER_VERSION="1.9.2"
           wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
-          unzip packer_${PACKER_VERSION}_linux_amd64.zip
-          sudo mv packer /usr/local/bin/
+          unzip -o packer_${PACKER_VERSION}_linux_amd64.zip
+          sudo mv -f packer /usr/local/bin/
           packer version
           
       - name: Initialize Packer
